@@ -305,6 +305,12 @@ log="$(mktemp -d)"
 fails=0
 note() { printf '%s\n' "$*"; }
 
+# 选一个可用的 python（doc_check.py 只需要标准库）
+PY=""
+for c in python3 python py; do
+    if command -v "$c" >/dev/null 2>&1; then PY="$c"; break; fi
+done
+
 # ---- 1/3 主机测试 ----
 if [ -f test/host/build.sh ]; then
     note "[1/3] 主机测试 (test/host/build.sh)"
@@ -327,7 +333,9 @@ fi
 # ---- 2/3 文档检查 ----
 if [ -f test/doc_check.py ]; then
     note "[2/3] 文档检查 (test/doc_check.py)"
-    if python3 test/doc_check.py > "$log/doc.log" 2>&1 || python test/doc_check.py > "$log/doc.log" 2>&1; then
+    if [ -z "$PY" ]; then
+        note "       FAIL（找不到 python3 / python）"; fails=$((fails+1))
+    elif $PY test/doc_check.py > "$log/doc.log" 2>&1; then
         if grep -q 'RESULT: PASS' "$log/doc.log"; then
             note "       PASS"
         else
@@ -373,5 +381,6 @@ cat <<EOF
   cd $dst
   git init -b main
   git add -A && git commit -m "chore: 初始化工程骨架"
-  # 然后按 workflow/08_新工程落地清单.md 逐项打钩
+  # 然后按流程仓库的 08_新工程落地清单.md 逐项打钩
+  # （若已把流程仓库复制到本工程的 workflow/，则是 workflow/08_新工程落地清单.md）
 EOF
