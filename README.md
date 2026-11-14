@@ -8,6 +8,30 @@
 
 ---
 
+## 0. 三十分钟起步
+
+拿到一个新项目时，只做三件事：
+
+```bash
+# 1) 一条命令生成骨架（约 1 秒）
+bash tools/new_project.sh my_project
+
+# 2) 在生成的目录里跑一次自检（构建/测试没有就跳过）
+cd my_project
+bash test/verify.sh          # 期望 RESULT: PASS
+
+# 3) 打开 STATUS.md，写下"下一步"的第一条
+```
+
+接下来按 `08_新工程落地清单.md` 逐项打钩即可。
+生成的内容：`STATUS.md`、`README.md`、`docs/{00,01,19,38}`、`test/{doc_check.py,verify.sh}`、
+`.gitattributes`、`.gitignore`——都不绑具体芯片与工具链。
+
+> 骨架**不含**工程文件、启动代码、HAL：那部分按你的芯片与 IDE 建，
+> 建完把它接进 `test/verify.sh` 第 3 步（固件构建）即可。
+
+---
+
 ## 1. 这套流程解决什么问题
 
 | 常见问题 | 本流程的对策 |
@@ -76,7 +100,8 @@ dev_workflow/
 ├── 10_资源预算.md              ← Flash/RAM/栈/CPU 怎么量、怎么留余量
 ├── 11_需求与方案.md            ← 需求写成可测量、方案对比、风险前置
 ├── tools/
-│   └── doc_check.py           ← 通用文档检查（复制到新工程 test/ 下）
+│   ├── doc_check.py           ← 通用文档检查（复制到新工程 test/ 下）
+│   └── new_project.sh         ← 一条命令生成新工程骨架
 └── templates/                 ← 可直接复制的文档模板
     ├── t_STATUS.md            ← 一页纸状态牌（每天看的那一页）
     ├── t_开发日志条目.md
@@ -106,6 +131,14 @@ dev_workflow/
 ## 4. 怎么复用到新工程
 
 ### 4.1 复制
+
+最快的方式是跑一次脚手架，它会把下面这套目录结构直接生成出来：
+
+```bash
+bash tools/new_project.sh my_project
+```
+
+想要手工搭、或想看生成的是什么，就按下面的结构复制：
 
 把本仓库整体复制到新工程根目录、改名 `workflow/`，然后把 `docs/` 建成下图结构：
 
